@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Gradient Generator</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f3f4f6;
+}
+
+.container{
+    width:700px;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    justify-content:center;
+    margin-bottom:20px;
+}
+
+.control-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.preview{
+    height:220px;
+    border-radius:12px;
+    margin-bottom:20px;
+    background:linear-gradient(90deg,#ff6b6b,#4ecdc4);
+}
+
+.code-box{
+    width:100%;
+    height:80px;
+    resize:none;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin-bottom:15px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+.status{
+    text-align:center;
+    margin-top:10px;
+    color:green;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>CSS Gradient Generator</h1>
+
+    <div class="controls">
+
+        <div class="control-group">
+            <label>Color 1</label>
+            <input type="color" id="color1" value="#ff6b6b">
+        </div>
+
+        <div class="control-group">
+            <label>Color 2</label>
+            <input type="color" id="color2" value="#4ecdc4">
+        </div>
+
+        <div class="control-group">
+            <label>Gradient Type</label>
+            <select id="type">
+                <option value="linear">Linear</option>
+                <option value="radial">Radial</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Angle</label>
+            <input type="range" id="angle" min="0" max="360" value="90">
+            <span id="angleValue">90°</span>
+        </div>
+
+    </div>
+
+    <!-- Live Preview -->
+    <div class="preview" id="preview"></div>
+
+    <!-- Generated CSS -->
+    <textarea id="cssCode" class="code-box" readonly></textarea>
+
+    <button id="copyBtn">Copy CSS Code</button>
+
+    <div class="status" id="status"></div>
+</div>
+
+<script>
+const color1 = document.getElementById("color1");
+const color2 = document.getElementById("color2");
+const type = document.getElementById("type");
+const angle = document.getElementById("angle");
+const angleValue = document.getElementById("angleValue");
+const preview = document.getElementById("preview");
+const cssCode = document.getElementById("cssCode");
+const status = document.getElementById("status");
+
+function updateGradient() {
+    let gradient;
+
+    if(type.value === "linear"){
+        gradient =
+        `linear-gradient(${angle.value}deg, ${color1.value}, ${color2.value})`;
+    } else {
+        gradient =
+        `radial-gradient(circle, ${color1.value}, ${color2.value})`;
+    }
+
+    preview.style.background = gradient;
+
+    cssCode.value =
+`background: ${gradient};`;
+
+    angleValue.textContent = angle.value + "°";
+}
+
+async function copyCSS() {
+    try {
+        await navigator.clipboard.writeText(cssCode.value);
+
+        status.textContent = "✓ CSS copied to clipboard!";
+        setTimeout(() => {
+            status.textContent = "";
+        }, 2000);
+
+    } catch(error) {
+        status.textContent = "Copy failed!";
+    }
+}
+
+color1.addEventListener("input", updateGradient);
+color2.addEventListener("input", updateGradient);
+type.addEventListener("change", updateGradient);
+angle.addEventListener("input", updateGradient);
+
+document.getElementById("copyBtn")
+        .addEventListener("click", copyCSS);
+
+updateGradient();
+</script>
+
+</body>
+</html>
